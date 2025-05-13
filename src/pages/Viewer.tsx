@@ -1,14 +1,14 @@
 
 import React from 'react';
 import { LiveKitProvider } from '@/context/LiveKitContext';
-import Host from '@/components/Host';
+import Viewer from '@/components/Viewer';
 
-const Index = () => {
+const ViewerPage = () => {
   return (
     <LiveKitProvider>
-      <Host />
+      <Viewer />
     </LiveKitProvider>
   );
 };
 
-export default Index;
+export default ViewerPage;
