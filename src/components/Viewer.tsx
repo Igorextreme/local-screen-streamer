@@ -57,7 +57,9 @@ const Viewer: React.FC = () => {
 
     // Initial check for existing tracks
     room.participants.forEach(participant => {
-      participant.trackPublications.forEach(publication => {
+      // Get all published tracks for this participant
+      const publications = participant.getTracks();
+      publications.forEach(publication => {
         if (
           publication.track && 
           publication.source === Track.Source.ScreenShare &&

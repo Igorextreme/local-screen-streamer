@@ -39,12 +39,14 @@ const Host: React.FC = () => {
       }
 
       // Request screen share permissions
-      const screenTrack = await room?.localParticipant.createScreenShareTrack({
+      const screenTracks = await room?.localParticipant.createScreenTracks({
         audio: false,
       });
       
-      if (screenTrack) {
-        await room?.localParticipant.publishTrack(screenTrack);
+      if (screenTracks && screenTracks.length > 0) {
+        for (const track of screenTracks) {
+          await room?.localParticipant.publishTrack(track);
+        }
         setIsSharing(true);
       }
     } catch (error) {
