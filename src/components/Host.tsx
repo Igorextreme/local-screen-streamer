@@ -5,11 +5,13 @@ import { getLocalIp, generateToken } from '../services/api';
 import { Track } from 'livekit-client';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { toast } from '@/hooks/use-toast';
 
 const Host: React.FC = () => {
   const { room, isConnected, viewerCount, connectToRoom, disconnectFromRoom } = useLiveKit();
   const [localIp, setLocalIp] = useState<string>('');
   const [isSharing, setIsSharing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -19,7 +21,7 @@ const Host: React.FC = () => {
         setLocalIp(ip);
       } catch (error) {
         console.error('Failed to get local IP:', error);
-        setError('Failed to get local IP address. Make sure the server is running.');
+        setError('Failed to get local IP address. Make sure the server is running with "node start.js".');
       }
     };
     
@@ -27,6 +29,9 @@ const Host: React.FC = () => {
   }, []);
 
   const startScreenShare = async () => {
+    setIsLoading(true);
+    setError(null);
+    
     try {
       if (!isConnected) {
         // Connect to LiveKit room
@@ -48,10 +53,21 @@ const Host: React.FC = () => {
           await room?.localParticipant.publishTrack(track);
         }
         setIsSharing(true);
+        toast({
+          title: "Screen Sharing Started",
+          description: "Your screen is now being shared.",
+        });
       }
     } catch (error) {
       console.error('Failed to start screen sharing:', error);
-      setError('Failed to start screen sharing. Please try again.');
+      setError('Failed to start screen sharing. Please make sure the server is running with "node start.js".');
+      toast({
+        title: "Screen Sharing Failed",
+        description: "Could not start screen sharing. Check console for details.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -64,6 +80,10 @@ const Host: React.FC = () => {
         }
       });
       setIsSharing(false);
+      toast({
+        title: "Screen Sharing Stopped",
+        description: "Your screen is no longer being shared.",
+      });
     } catch (error) {
       console.error('Failed to stop screen sharing:', error);
       setError('Failed to stop screen sharing. Please try again.');
@@ -86,8 +106,9 @@ const Host: React.FC = () => {
             <Button 
               className="w-full py-3 text-xl"
               onClick={startScreenShare}
+              disabled={isLoading}
             >
-              Start Screen Sharing
+              {isLoading ? "Connecting..." : "Start Screen Sharing"}
             </Button>
           ) : (
             <Button 
@@ -114,6 +135,10 @@ const Host: React.FC = () => {
               </p>
             </div>
           )}
+          
+          <div className="mt-4 text-sm text-gray-400">
+            <p>⚠️ Important: Make sure to start the server by running <code className="bg-gray-700 px-2 py-1 rounded">node start.js</code> in your terminal.</p>
+          </div>
         </div>
       </Card>
     </div>
