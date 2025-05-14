@@ -1,9 +1,9 @@
 
-const express = require('express');
-const cors = require('cors');
-const { AccessToken } = require('livekit-server-sdk');
-const os = require('os');
-const dotenv = require('dotenv');
+import express from 'express';
+import cors from 'cors';
+import { AccessToken } from 'livekit-server-sdk';
+import os from 'os';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
